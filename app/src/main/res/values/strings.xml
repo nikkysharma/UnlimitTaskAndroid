@@ -3,6 +3,6 @@
     <string name="no_internet_error">No Internet\n</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="no_items_to_display">There are no items here to display\n</string>
+    <string name="no_items_to_display">There are no jokes here to display\n Please Wait for 1 minute new jokes will be download</string>
     <string name="unlimit_jokes">Unlimit Jokes</string>
 </resources>
