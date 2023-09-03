@@ -4,7 +4,6 @@ import com.example.unlimittaskapp.base.BaseRepository
 import com.example.unlimittaskapp.data.database.module.Jokes
 import com.example.unlimittaskapp.remote.apinterface.RetrofitApiService
 import com.example.unlimittaskapp.remote.response.AppResponse
-import com.example.unlimittaskapp.remote.response.JokesData
 import javax.inject.Inject
 
 class HomeComponentService
@@ -14,7 +13,7 @@ class HomeComponentService
 
     /**
      * get all available staff list*/
-    suspend fun getJokesLists(parameter:String): AppResponse<JokesData> {
+    suspend fun getJokesLists(parameter:String): AppResponse<Jokes> {
         return invokeApiCall {
             retrofitApi.getJokesLists(parameter)
         }

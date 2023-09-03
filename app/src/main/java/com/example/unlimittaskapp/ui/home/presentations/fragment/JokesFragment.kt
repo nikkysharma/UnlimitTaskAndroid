@@ -1,37 +1,44 @@
 package com.example.unlimittaskapp.ui.home.presentations.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.unlimittaskapp.base.BaseFragment
-import com.example.unlimittaskapp.base.MainThreadBus
+import com.example.unlimittaskapp.constant.AppConstants
 import com.example.unlimittaskapp.data.database.module.Jokes
 import com.example.unlimittaskapp.databinding.FragmentJokesBinding
+import com.example.unlimittaskapp.remote.response.AppResponse
 import com.example.unlimittaskapp.ui.home.presentations.adapter.JokesAdapter
 import com.example.unlimittaskapp.ui.home.presentations.viewmodels.JokesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.realm.Realm
 import io.realm.RealmQuery
-import java.util.Timer
-import java.util.TimerTask
+import io.realm.Sort
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class JokesFragment : BaseFragment() {
+class JokesFragment : Fragment() {
 
     var binding: FragmentJokesBinding? = null
     private val viewModel: JokesViewModel by viewModels()
-    @Inject
-    lateinit var bus: MainThreadBus
 
     var adapter :JokesAdapter?= null
+
     @Inject
     lateinit var realm: Realm
+
+    lateinit var  repeatFun :Job
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,76 +49,50 @@ class JokesFragment : BaseFragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        bus.register(this)
-       // initiateObserver()
-        callJokesApis()
         val query = realm.where(Jokes::class.java)
         setRecyclerViewFunction(query)
-        callTimer()
+        repeatFun = repeat()
+        initiateObserver()
 
     }
-    private val timer = Timer()
-    private fun callTimer(){
-        val hourlyTask: TimerTask = object : TimerTask() {
-            override fun run() {
-                // your code here...
+    private fun repeat(): Job {
+        return lifecycleScope.launch {
+            while(isActive) {
+                    //do your network request here
+                delay(1000 * 60)
                 callJokesApis()
+                Log.d("isCall","real")
+
             }
         }
-        // schedule the task to run starting now and then every hour...
-
-        // schedule the task to run starting now and then every hour...
-        timer.schedule(hourlyTask, 0L, (100 * 60 * 60).toLong())
+    }
+    /**
+     *this function is used for observer the api calling data and loading data
+     * */
+    private fun initiateObserver() {
+        viewModel.jokesListLiveData.observe(viewLifecycleOwner) { response ->
+            when (response) {
+                is AppResponse.Success -> {
+                    validateListData()
+                }
+                is AppResponse.Error -> {
+                    validateListData()
+                }
+                else -> {
+                    validateListData()
+                }
+            }
+        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        timer.cancel()
-        binding = null
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        repeatFun.cancel()
     }
     private fun callJokesApis() {
         viewModel.getJokesList()
     }
-//    private fun initiateObserver(){
-//        viewModel.jokesListLiveData.observe(viewLifecycleOwner) { response ->
-//            when (response) {
-//                is AppResponse.Loading -> showProgress()
-//                is AppResponse.Success -> {
-//                    dismissProgress()
-//                    bus.post(UpdateUi())
-//                }
-//                is AppResponse.Error -> {
-//                    dismissProgress()
-//                    bus.post(UpdateUi())
-//                }
-//                else -> {
-//                    dismissProgress()
-//                }
-//            }
-//        }
-//    }
-//    @Subscribe
-//    fun setViewTypeEvent(event: UpdateUi){
-//        applyList()
-//    }
-//
-//    private fun applyList() {
-//        when(val data = viewModel.getJokesDataFromLocalDB()){
-//            is AppResponse.Success -> {
-//                val query = realm.where(Jokes::class.java)
-//                setRecyclerViewFunction(query)
-//            }
-//            is AppResponse.Error -> {
-//               // no dta
-//                binding?.rvJokesList!!.hideNoRecordLayout()
-//            }
-//
-//            else -> {
-//
-//            }
-//        }
-//
-//    }
 
     /**
      *this function is used for view pager functionality
@@ -120,6 +101,7 @@ class JokesFragment : BaseFragment() {
         adapter = activity?.let {
             JokesAdapter(
                query
+                   .sort(AppConstants.DATE_SORT,Sort.DESCENDING)
                    .limit(10)
                    .findAll(),
                 it

@@ -24,7 +24,11 @@ android {
         debug {
             debuggable true
             buildConfigField "String", "BASE_URL", "\"https://geek-jokes.sameerkumar.website/\""
-            buildConfigField "String", "GRAPHQL_SERVER_URL", "\"https://geek-jokes.sameerkumar.website/\""
+        }
+        release {
+            minifyEnabled false
+            debuggable false
+            buildConfigField "String", "BASE_URL", "\"https://geek-jokes.sameerkumar.website/\""
         }
     }
 

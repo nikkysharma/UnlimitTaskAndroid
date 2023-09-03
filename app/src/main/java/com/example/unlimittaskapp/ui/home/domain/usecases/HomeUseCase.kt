@@ -2,7 +2,6 @@ package com.example.unlimittaskapp.ui.home.domain.usecases
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.unlimittaskapp.DateTimeUtils
 import com.example.unlimittaskapp.data.database.module.Jokes
 import com.example.unlimittaskapp.remote.response.AppResponse
 import com.example.unlimittaskapp.ui.home.domain.repository.HomeRepository
@@ -24,20 +23,28 @@ class HomeUseCase @Inject constructor(
     suspend fun callJokesApis() : AppResponse<RealmList<Jokes>>{
         val jokesData = homeRepository.getJokesLists("json")
         if (jokesData is AppResponse.Success) {
-            val data = jokesData.data.joke.toString()
-            val randomId = UUID.randomUUID().toString()
-            val jsonData = Jokes()
-            jsonData.jokes = data
-            jsonData.jokesId = randomId
-            val dateLocal: Date = Calendar.getInstance().time
-            val df = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-            val formattedDate: String = df.format(dateLocal)
-            jsonData.startDateStr = formattedDate
+            val jokesData = createJokesData(jokesData.data.toString())
             realm.executeTransaction {
-                    it.insertOrUpdate(jsonData)
+//               val data = it.where(Jokes::class.java)
+//                    .sort(AppConstants.DATE_SORT,Sort.DESCENDING)
+//                    .findAll()
+                it.insertOrUpdate(jokesData)
+
             }
         }
         return getJokesList()
+    }
+    private fun createJokesData(data:String) : Jokes {
+        val randomId = UUID.randomUUID().toString()
+        val jsonData = Jokes()
+        jsonData.jokes = data
+        jsonData.jokesId = randomId
+        val dateLocal: Date = Calendar.getInstance().time
+        val df = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+        val formattedDate: String = df.format(dateLocal)
+        jsonData.startDateStr = formattedDate
+        jsonData.startDate = dateLocal
+        return  jsonData
     }
 
     fun getJokesList(

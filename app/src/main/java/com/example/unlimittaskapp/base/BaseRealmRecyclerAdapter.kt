@@ -13,7 +13,7 @@ abstract class BaseRealmRecyclerAdapter<T : RealmObject>(
     val context: Context,
     data: OrderedRealmCollection<T?>
 ) : RealmRecyclerViewAdapter<T?,
-        BaseViewHolder<T>>(data, true)  {
+        BaseViewHolder<T>>(data, true,true)  {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<T> {
         val layoutInflater = LayoutInflater.from(context)

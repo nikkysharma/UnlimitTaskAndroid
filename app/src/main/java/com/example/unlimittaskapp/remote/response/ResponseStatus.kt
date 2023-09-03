@@ -1,9 +1,6 @@
 package com.example.unlimittaskapp.remote.response
 
 object ResponseStatus {
-    const val ERROR = 0
-    const val SUCCESS = 1
-    const val LOADING = 2
 
     const val BAD_REQUEST = 400
     const val UN_AUTHORIZED = 401
