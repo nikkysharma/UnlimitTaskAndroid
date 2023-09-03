@@ -1,5 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <style name="Theme.Unlimit" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/color_primary</item>
+        <item name="colorPrimaryVariant">@color/color_primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/colorPrimary</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+        <item name="colorOnSecondary">@color/black</item>
 
-    <style name="Theme.UnlimitTaskApp" parent="android:Theme.Material.Light.NoActionBar" />
+
+    </style>
+    <declare-styleable name="NoRecordRecyclerView">
+        <attr name="noRecordImage" format="reference" />
+        <attr name="noRecordText" format="string" />
+    </declare-styleable>
 </resources>
