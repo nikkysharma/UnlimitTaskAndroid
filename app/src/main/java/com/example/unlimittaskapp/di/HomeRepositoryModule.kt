@@ -27,16 +27,16 @@ object HomeRepositoryModule {
     @Singleton
     @Provides
     fun provideHomeUseCase(
-        homeRepository: HomeRepository,
-        realm: Realm
+        homeRepository: HomeRepository
     ): HomeUseCase {
-        return HomeUseCase(homeRepository, realm)
+        return HomeUseCase(homeRepository)
     }
     @Singleton
     @Provides
     fun provideHomeService(
-        apiService: RetrofitApiService
+        apiService: RetrofitApiService,
+        realm: Realm
     ): HomeComponentService {
-        return HomeComponentService(apiService)
+        return HomeComponentService(apiService,realm)
     }
 }

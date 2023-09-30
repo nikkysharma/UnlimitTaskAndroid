@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.unlimittaskapp.CommonUtils
 import com.example.unlimittaskapp.constant.AppConstants
 import com.example.unlimittaskapp.data.database.module.Jokes
 import com.example.unlimittaskapp.databinding.FragmentJokesBinding
@@ -91,7 +92,9 @@ class JokesFragment : Fragment() {
         repeatFun.cancel()
     }
     private fun callJokesApis() {
-        viewModel.getJokesList()
+        if (CommonUtils.isNetworkAvailable(requireContext())) {
+            viewModel.getJokes()
+        }
     }
 
     /**
@@ -102,7 +105,7 @@ class JokesFragment : Fragment() {
             JokesAdapter(
                query
                    .sort(AppConstants.DATE_SORT,Sort.DESCENDING)
-                   .limit(10)
+                   .limit(20)
                    .findAll(),
                 it
             )

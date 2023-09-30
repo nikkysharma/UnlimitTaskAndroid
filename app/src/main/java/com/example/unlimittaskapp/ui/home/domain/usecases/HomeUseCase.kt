@@ -1,11 +1,10 @@
 package com.example.unlimittaskapp.ui.home.domain.usecases
 
-import android.os.Build
-import androidx.annotation.RequiresApi
+import com.example.unlimittaskapp.CommonUtils
 import com.example.unlimittaskapp.data.database.module.Jokes
 import com.example.unlimittaskapp.remote.response.AppResponse
+import com.example.unlimittaskapp.remote.response.ResponseStatus
 import com.example.unlimittaskapp.ui.home.domain.repository.HomeRepository
-import io.realm.Realm
 import io.realm.RealmList
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -16,24 +15,23 @@ import javax.inject.Inject
 
 
 class HomeUseCase @Inject constructor(
-    private val homeRepository: HomeRepository,
-    private var realm: Realm
+    private val homeRepository: HomeRepository
 ) {
-    @RequiresApi(Build.VERSION_CODES.O)
-    suspend fun callJokesApis() : AppResponse<RealmList<Jokes>>{
+    suspend fun callJokesApis() : AppResponse<Jokes>{
         val jokesData = homeRepository.getJokesLists("json")
         if (jokesData is AppResponse.Success) {
-            val jokesData = createJokesData(jokesData.data.toString())
-            realm.executeTransaction {
-//               val data = it.where(Jokes::class.java)
-//                    .sort(AppConstants.DATE_SORT,Sort.DESCENDING)
-//                    .findAll()
-                it.insertOrUpdate(jokesData)
-
-            }
+            val newlyCreatedData = createJokesData(jokesData.data.toString())
+            insertDataIntoLocalDataBase(newlyCreatedData)
+            return jokesData
         }
-        return getJokesList()
+        return jokesData
     }
+
+    private suspend fun insertDataIntoLocalDataBase(jokesData: Jokes) {
+         homeRepository.insertJokesListInDb(jokesData)
+    }
+
+
     private fun createJokesData(data:String) : Jokes {
         val randomId = UUID.randomUUID().toString()
         val jsonData = Jokes()
@@ -47,23 +45,9 @@ class HomeUseCase @Inject constructor(
         return  jsonData
     }
 
-    fun getJokesList(
+    suspend fun getJokesList(
     ): AppResponse<RealmList<Jokes>> {
-        val list = RealmList<Jokes>()
-        realm.executeTransaction {
-            val item =
-                it.where(Jokes::class.java)
-                    .findAll()
-            val data = it.copyFromRealm(item)
-            if (data.size>0){
-                data?.let { it1 ->
-                    list.addAll(it1)
-                }
-            }
-        }
-        return if(list.size>0)
-            AppResponse.Success(list)
-        else AppResponse.Error(404,"no data available")
+       return homeRepository.getJokesListsFromDb()
     }
 
 }

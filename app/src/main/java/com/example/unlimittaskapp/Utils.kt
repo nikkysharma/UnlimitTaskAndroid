@@ -18,6 +18,7 @@ object CommonUtils {
             ResponseStatus.UN_AUTHORIZED -> "Unauthorized Access"
             ResponseStatus.TIMEOUT -> "Request TimeOut"
             ResponseStatus.SERVER_ERROR -> "Server Error"
+            ResponseStatus.NO_DATA -> "No Data Found"
             ResponseStatus.NO_INTERNET -> context?.getText(R.string.no_internet_error)
                 ?: "No Internet connection"
             else -> "Something went wrong"

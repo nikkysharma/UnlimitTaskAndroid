@@ -13,11 +13,12 @@ android {
 
     defaultConfig {
         applicationId "com.example.unlimittaskapp"
-        minSdk 24
+        minSdk 28
         targetSdk 33
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
+        testInstrumentationRunner "com.example.unlimittaskapp.ui.HiltTestRunner"
 
     }
     buildTypes {
@@ -104,5 +105,35 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.13.0'
     kapt 'com.github.bumptech.glide:compiler:4.13.0'
     implementation 'com.github.bumptech.glide:okhttp3-integration:4.9.0'
+
+
+
+    testImplementation 'org.mockito:mockito-core:3.7.0'
+    testImplementation 'org.mockito:mockito-inline:3.7.0'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
+    androidTestImplementation 'org.mockito:mockito-android:2.24.5'
+
+
+
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.1'
+    // Espresso
+    def androidx_test_espresso = "3.4.0"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidx_test_espresso"
+
+    // androidx.test
+    def androidx_test = "1.1.0"
+    androidTestImplementation "androidx.test:runner:$androidx_test"
+    androidTestImplementation "androidx.test:core:$androidx_test"
+    androidTestImplementation "androidx.test.ext:junit-ktx:$androidx_test"
+    // For instrumentation hilt tests
+    androidTestImplementation 'com.google.dagger:hilt-android-testing:2.38.1'
+    kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.38.1'
+    // Truth Assert Espresso Test
+    androidTestImplementation "com.google.truth:truth:1.0.1"
+    // androidx.fragment
+    def fragment_version = "1.4.0"
+    debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
 
 }
